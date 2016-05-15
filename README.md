@@ -6,4 +6,6 @@ The `<device-battery>` element provides access to the device's battery informati
 
 Use it like so:
 
-    <device-battery></device-battery>
+```html
+<device-battery></device-battery>
+```
