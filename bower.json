@@ -1,0 +1,36 @@
+{
+	"name": "device-battery",
+	"version": "1.0.0",
+	"authors": [
+		"43081j"
+	],
+	"description": "Retrieve battery information from the device.",
+	"license": "MIT",
+	"homepage": "https://github.com/43081j/device-battery",
+	"keywords": [
+		"battery",
+		"polymer",
+		"web-component",
+		"web-components"
+	],
+	"main": "device-battery.html",
+	"private": true,
+	"repository": {
+		"type": "git",
+		"url": "git://github.com/43081j/device-battery.git"
+	},
+	"ignore": [
+		"**/.*",
+		"node_modules",
+		"bower_components",
+		"test",
+		"tests"
+	],
+	"dependencies": {
+		"polymer": "Polymer/polymer#^1.1.0"
+	},
+	"devDependencies": {
+		"iron-component-page": "PolymerElements/iron-component-page#^1.0.0",
+		"web-component-tester": "^4.0.0"
+	}
+}
