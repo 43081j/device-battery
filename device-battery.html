@@ -20,6 +20,12 @@ Use it like so:
 			Polymer({
 				is: 'device-battery',
 
+				/**
+				 * Fired when an error occurs during battery status retrieval
+				 *
+				 * @event device-battery-error
+				 */
+
 				properties: {
 					/**
 					 * Indicates whether the battery API is supported
