@@ -1,0 +1,48 @@
+<!doctype html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<title>&lt;device-battery&gt; Demo</title>
+		<script src="../../webcomponentsjs/webcomponents-lite.min.js"></script>
+		<link rel="import" href="../device-battery.html">
+
+		<style>
+			.battery {
+				border: 1px solid #ccc;
+				padding: 30px;
+				margin: 50px auto;
+				max-width: 500px;
+			}
+
+			.battery p {
+				margin: 0;
+			}
+		</style>
+	</head>
+
+	<body unresolved>
+		<template is="dom-bind">
+			<device-battery
+				supported="{{supported}}"
+				percentage="{{percentage}}"
+				charging="{{charging}}"
+				charging-time="{{chargingTime}}"
+				discharging-time="{{dischargingTime}}"
+				id="battery"></device-battery>
+			<div class="battery">
+				<template is="dom-if" if="[[supported]]">
+					<template is="dom-if" if="[[charging]]">
+						<p>Device is currently <strong>charging</strong> (<span>[[percentage]]</span>%) and will reach 100% in <strong>[[chargingTime]]</strong> seconds.</p>
+					</template>
+					<template is="dom-if" if="[[!charging]]">
+						<p>Device is currently <strong>discharging</strong> (<span>[[percentage]]</span>%) and will reach 0% in <strong>[[dischargingTime]]</strong> seconds.</p>
+					</template>
+				</template>
+				<template is="dom-if" if="[[!supported]]">
+					<p>Sorry, your browser doesn't support the Battery API.</p>
+				</template>
+			</div>
+		</template>
+	</body>
+</html>

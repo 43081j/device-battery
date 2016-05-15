@@ -1,0 +1,106 @@
+<!doctype html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
+
+		<script src="../../webcomponentsjs/webcomponents-lite.js"></script>
+		<script src="../../web-component-tester/browser.js"></script>
+		<link rel="import" href="../device-battery.html">
+	</head>
+	<body>
+		<test-fixture id="default">
+			<template>
+				<device-battery></device-battery>
+			</template>
+		</test-fixture>
+
+		<script>
+			describe('device-battery', function() {
+				var el, battery;
+
+				var bt = function(opts) {
+					this.charging = opts.charging;
+					this.chargingTime = opts.chargingTime;
+					this.dischargingTime = opts.dischargingTime;
+					this.level = opts.level;
+					this.listeners = {};
+				};
+
+				bt.prototype.addEventListener = function(ev, cb) {
+					this.listeners[ev] = cb;
+				};
+
+				bt.prototype.fire = function(ev) {
+					this.listeners[ev]();
+				};
+
+				beforeEach(function() {
+					battery = new bt({
+						charging: true,
+						chargingTime: 10,
+						dischargingTime: Infinity,
+						level: 0.5
+					});
+					sinon.stub(navigator, 'getBattery').returns(Promise.resolve(battery));
+
+					el = fixture('default');
+				});
+
+				afterEach(function() {
+					navigator.getBattery.restore();
+				});
+
+				it('should retrieve battery information', function(cb) {
+					flush(function() {
+						expect(el.charging).to.equal(true);
+						expect(el.chargingTime).to.equal(10);
+						expect(el.dischargingTime).to.equal(Infinity);
+						expect(el.level).to.equal(0.5);
+						cb();
+					});
+				});
+
+				it('should observe changes to charging state', function(cb) {
+					flush(function() {
+						expect(el.charging).to.equal(true);
+						battery.charging = false;
+						battery.fire('chargingchange');
+						expect(el.charging).to.equal(false);
+						cb();
+					});
+				});
+
+				it('should observe changes to charging time', function(cb) {
+					flush(function() {
+						expect(el.chargingTime).to.equal(10);
+						battery.chargingTime = 20;
+						battery.fire('chargingtimechange');
+						expect(el.chargingTime).to.equal(20);
+						cb();
+					});
+				});
+
+				it('should observe changes to discharging time', function(cb) {
+					flush(function() {
+						expect(el.dischargingTime).to.equal(Infinity);
+						battery.dischargingTime = 10;
+						battery.fire('dischargingtimechange');
+						expect(el.dischargingTime).to.equal(10);
+						cb();
+					});
+				});
+
+				it('should observe changes to level', function(cb) {
+					flush(function() {
+						expect(el.level).to.equal(0.5);
+						battery.level = 0.8;
+						battery.fire('levelchange');
+						expect(el.level).to.equal(0.8);
+						cb();
+					});
+				});
+			});
+		</script>
+	</body>
+</html>
