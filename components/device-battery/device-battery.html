@@ -1,0 +1,144 @@
+<link rel="import" href="../polymer/polymer.html">
+
+<!--
+The `<device-battery>` element provides access to the device's battery information, if supported by the browser.
+
+Use it like so:
+
+    <device-battery></device-battery>
+
+@element device-battery
+@demo demo/index.html
+-->
+<dom-module id="device-battery">
+	<script>
+		(function() {
+			'use strict';
+
+			var SUPPORTED = ('getBattery' in navigator);
+
+			Polymer({
+				is: 'device-battery',
+
+				properties: {
+					/**
+					 * Indicates whether the battery API is supported
+					 */
+					supported: {
+						readOnly: true,
+						notify: true,
+						type: Boolean,
+						value: function() {
+							return SUPPORTED;
+						}
+					},
+
+					/**
+					 * Indicates whether the device is charging or not
+					 */
+					charging: {
+						readOnly: true,
+						notify: true,
+						type: Boolean
+					},
+
+					/**
+					 * The time in seconds until the battery is fully charged
+					 */
+					chargingTime: {
+						readOnly: true,
+						notify: true,
+						type: Number
+					},
+
+					/**
+					 * The time in seconds until the battery is completely discharged
+					 */
+					dischargingTime: {
+						readOnly: true,
+						notify: true,
+						type: Number
+					},
+
+					/**
+					 * The device's battery level, scaled between 0.0 and 1.0
+					 */
+					level: {
+						readOnly: true,
+						notify: true,
+						type: Number
+					},
+
+					/**
+					 * The device's battery level as a percentage
+					 */
+					percentage: {
+						readOnly: true,
+						notify: true,
+						type: Number,
+						computed: '_computePercentage(level)'
+					}
+				},
+
+				_battery: null,
+
+				ready: function() {
+					if(!this.supported) {
+						this.fire('device-battery-error', 'Your browser does not support the battery API');
+						return;
+					}
+
+					navigator.getBattery()
+						.then((function(battery) {
+							this._battery = battery;
+
+							this._onEventChargingChange();
+							this._onEventChargingTimeChange();
+							this._onEventDischargingTimeChange();
+							this._onEventLevelChange();
+
+							battery.addEventListener(
+								'chargingchange',
+								this._onEventChargingChange.bind(this)
+							);
+							battery.addEventListener(
+								'chargingtimechange',
+								this._onEventChargingTimeChange.bind(this)
+							);
+							battery.addEventListener(
+								'dischargingtimechange',
+								this._onEventDischargingTimeChange.bind(this)
+							);
+							battery.addEventListener(
+								'levelchange',
+								this._onEventLevelChange.bind(this)
+							);
+						}).bind(this))
+						.catch((function(err) {
+							this.fire('device-battery-error', err);
+						}).bind(this));
+				},
+
+				_onEventChargingChange: function() {
+					this._setCharging(this._battery.charging);
+				},
+
+				_onEventChargingTimeChange: function() {
+					this._setChargingTime(this._battery.chargingTime);
+				},
+
+				_onEventDischargingTimeChange: function() {
+					this._setDischargingTime(this._battery.dischargingTime);
+				},
+
+				_onEventLevelChange: function() {
+					this._setLevel(this._battery.level);
+				},
+
+				_computePercentage: function(level) {
+					return (level * 100);
+				}
+			});
+		})();
+	</script>
+</dom-module>
